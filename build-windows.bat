@@ -1,6 +1,10 @@
 @echo off
 
-set VCVARS="C:\Program Files (x86)\Microsoft Visual Studio\2019\Professional\VC\Auxiliary\Build\vcvarsall.bat"
+@REM replace external/spirv-tools/cmakelists.txt's option with js script 
+python update_glslang_sources.py
+node optimize-cmake.js
+
+set VCVARS="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvarsall.bat"
 set CMAKE="C:\Program Files\CMake\bin\CMake.exe"
 if [%1] == [] (
     @REM set ARCH=win32
@@ -20,7 +24,8 @@ if exist %BUILD_DIR%\output\ (
     -DENABLE_HLSL=OFF ^
     -DENABLE_SPVREMAPPER=OFF ^
     -DSKIP_GLSLANG_INSTALL=ON ^
-    -DSPIRV_SKIP_EXECUTABLES=ON
+    -DSPIRV_SKIP_EXECUTABLES=ON ^
+    -DUSE_CXX_EXCEPTIONS=OFF
 
 @REM The debug version of SPIRV-Tools-opt is just too cumbersome to be carried around
 node build-utils.js --enable-debug-opt %BUILD_DIR%\External\spirv-tools\source\opt\SPIRV-Tools-opt.vcxproj
